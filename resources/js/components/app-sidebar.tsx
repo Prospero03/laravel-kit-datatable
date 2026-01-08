@@ -13,18 +13,18 @@ import {
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid, UserIcon } from 'lucide-react';
+import { BookOpen, Database, Folder, LayoutGrid, UserIcon } from 'lucide-react';
 import AppLogo from './app-logo';
 import users from '@/routes/users';
 
 const mainNavItems: NavItem[] = [
     {
-        title: 'Dashboard',
+        title: 'Панель',
         href: dashboard(),
         icon: LayoutGrid,
     },
     {
-        title: 'Users',
+        title: 'Пользователи',
         href: users.index(),
         icon: UserIcon,
     },
@@ -32,14 +32,14 @@ const mainNavItems: NavItem[] = [
 
 const footerNavItems: NavItem[] = [
     {
-        title: 'Repository',
-        href: 'https://github.com/laravel/react-starter-kit',
+        title: 'Репозиторий',
+        href: 'https://github.com/Prospero03/laravel-kit-datatable',
         icon: Folder,
     },
     {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#react',
-        icon: BookOpen,
+        title: 'PHPMyAdmin',
+        href: 'http://localhost/phpmyadmin/index.php?route=/database/structure&db=laravel_kit_datatable',
+        icon: Database,
     },
 ];
 
