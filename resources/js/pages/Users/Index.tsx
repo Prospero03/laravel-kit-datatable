@@ -1,3 +1,5 @@
+import DataTable from '@/components/DataTables/DataTable';
+import Datatable from '@/components/DataTables/DataTable';
 import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import AppLayout from '@/layouts/app-layout';
 import users from '@/routes/users';
@@ -41,6 +43,7 @@ export default function Index({users}:{users:User[]}) {
             <Head title="Пользователи" />
             <div className='p-12'>
                 <h2>Пользователи</h2>
+                <DataTable/>
             </div>
         </AppLayout>
     );
