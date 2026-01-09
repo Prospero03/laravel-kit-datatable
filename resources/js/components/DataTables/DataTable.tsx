@@ -1,7 +1,15 @@
 import { usePage, router } from "@inertiajs/react"
-import { Search } from "lucide-react";
-import { useState } from "react"
-// import route from 'ziggy-js';
+import { ArrowDown, ArrowUp, Search } from "lucide-react";
+import React, { useState } from "react"
+import {route} from 'ziggy-js';
+
+interface TableColumn {
+    key: string;
+    label : string;
+    type?: 'text' | 'number' | 'date' | 'custom';
+    sortable?: boolean;
+    render?: (row:any) => React.ReactNode;
+}
 
 export default function DataTable({
     data,
@@ -50,20 +58,42 @@ export default function DataTable({
     }
 
     const handlePerPageChange = () => {
-
     }
+
+    const handleSort = (column : any) =>{
+        const newDirection = sort === column && direction === 'asc' ? 'desc' : 'asc';
+        setSort(column);
+        setDirection(newDirection);
+        updateRoute({sort:column, direction: newDirection});
+    }
+
     const renderActions = (item : any) =>{
         return <div className="flex space-x-2">
             {canViewResource && (
                 <button onClick={() => router.visit(route(viewRoute, item.id))}>
-
+                    View
+                </button>
+            )}
+            {canEditResource && (
+                <button onClick={() => router.visit(route(editRoute, item.id))}>
+                    Edit
+                </button>
+            )}
+            {canDeleteResource && (
+                <button onClick={() => {
+                    setItemToDelete(item);
+                    setShowDeleteDialog(true)
+                }}>
+                    Delete
                 </button>
             )}
         </div>
     }
-    const tableColumns  = [...columns];
 
-    if(canEditResource || canDeleteResource){
+    const tableColumns: TableColumn[] = []; 
+    // const tableColumns  = [...columns];
+
+    if(canEditResource || canDeleteResource || canViewResource){
         tableColumns.push({
             key: ' actions',
             label : 'Actions',
@@ -128,8 +158,52 @@ export default function DataTable({
             <div className="overflow-hidden rounded-lg border border-gray-200 shadow">
                 <table className="min-w-full divide-y divide-gray-200 bg-white">
                     <thead>
-                        <tr className="bg-gray-50">{tableColumns}</tr>
+                        <tr className="bg-gray-50">
+                            {tableColumns.map((column)=>(
+                                <th key={column.key}
+                                    className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
+                                    style={column.width ? {width:column.width} : {}}
+                                >
+                                    {column.sortable !== false ? (
+                                        <button onClick={() => handleSort(column.key)}
+                                                className="group inline-flex items-center">
+                                            column.label
+                                            <span className="ml-2">
+                                                {sort === column.key ? (
+                                                    direction === 'asc' ? (
+                                                        <ArrowUp className="h-4 w-4 text-blue-500"/>
+                                                    ): (
+                                                        <ArrowDown className="h-4 w-4 text-blue-500"/>
+                                                    )
+                                                ):(
+                                                    <span className="opacity-0 group-hover:opacity-50">
+                                                        <ArrowUp className="h-4 w-4"/>
+                                                    </span>
+                                                )}
+                                            </span>
+                                        </button>
+                                    ):(
+                                        column.label
+                                    )}
+                                </th>
+                            ))}
+                        </tr>
                     </thead>
+                    <tbody className="divide-y divide-gray-200">
+                        {data.data.length > 0 ?(
+                            data.data.map((item:any,  index: number)=>(
+                                <tr key={item.id} className="transition-colors hover:bg-gray-50">
+                                    {tableColumns.map((column)=>(
+                                        <td key={`${item.id}`}>
+                                            {/* 7:46 Part-3 */}
+                                        </td>
+                                    ))}
+                                </tr>
+                            ))
+                        ): (
+                            <></>
+                        )}
+                    </tbody>
                 </table>
             </div>
         </div>
