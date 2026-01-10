@@ -1,5 +1,5 @@
 import { usePage, router } from "@inertiajs/react"
-import { ArrowDown, ArrowUp, Search } from "lucide-react";
+import { ArrowDown, ArrowUp, ChevronLeft, ChevronRight, Search } from "lucide-react";
 import React, { useState } from "react"
 import {route} from 'ziggy-js';
 
@@ -57,7 +57,10 @@ export default function DataTable({
         updateRoute();
     }
 
-    const handlePerPageChange = () => {
+    const handlePerPageChange = (e : any) => {
+        const newPerPage = e.target.value;
+        setPerPage(newPerPage);
+        updateRoute({perPage : newPerPage})
     }
 
     const handleSort = (column : any) =>{
@@ -66,6 +69,80 @@ export default function DataTable({
         setDirection(newDirection);
         updateRoute({sort:column, direction: newDirection});
     }
+    const formatDate = (dateString: any) => {
+        const options = { year: 'numeric', month: 'short', day: 'numeric' };
+        return new Date(dateString).toLocaleDateString(undefined, options);
+    };
+
+    const formatDate2 = (dateString: any) => {
+        const date = new Date(dateString);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Month is zero-based
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
+
+    const renderCell = (item: any, column: any, index: number) => {
+        if (!column.key) return null;
+
+        const getValue = (obj: any, path: any) => {
+            return path.split('.').reduce((acc: any, part: any) => acc && acc[part], obj);
+        };
+
+        const value = getValue(item, column.key);
+
+        if (column.type === 'date' && value) {
+            return formatDate(value);
+        } 
+        if (column.type === 'date2' && value) {
+            return formatDate2(value);
+        } 
+        if (column.type === 'badge') {
+            return <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">{value}</span>;
+        }
+
+        if (column.type === 'image' && column.design === 'rec') {
+            return (
+                <img
+                    src={value}
+                    alt={item.name}
+                    onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = '/placeholder.png';
+                    }}
+                    className="h-30 w-30"
+                />
+            );
+        }
+        if (column.type === 'image' && column.design === 'circle') {
+            return (
+                <img
+                    src={value}
+                    alt={item.name}
+                    onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = '/placeholder.png';
+                    }}
+                    className="h-10 w-10 rounded-full"
+                />
+            );
+        }
+        if (column.type === 'boolean') {
+            return value ? (
+                <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">Yes</span>
+            ) : (
+                <span className="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800">No</span>
+            );
+        }
+
+        if(column.type ==='custom' && column.render){
+            return column.render(item);
+        }
+        if(column.type ==='IndexColumn' && column.render){
+            return column.render(item, index);
+        }
+        return value;
+    };
 
     const renderActions = (item : any) =>{
         return <div className="flex space-x-2">
@@ -89,6 +166,7 @@ export default function DataTable({
             )}
         </div>
     }
+
 
     const tableColumns: TableColumn[] = []; 
     // const tableColumns  = [...columns];
@@ -200,24 +278,93 @@ export default function DataTable({
                             ))}
                         </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-200">   
-                        {data.data.length > 0 ?(
-                            data.data.map((item:any,  index: number)=>(
+                    <tbody className="divide-y divide-gray-200">
+                        {data.data.length > 0 ? (
+                            data.data.map((item: any, index: number) => (
                                 <tr key={item.id} className="transition-colors hover:bg-gray-50">
-                                    {tableColumns.map((column)=>(
-                                        <td key={`${item.id}`}>
-                                            {/* 7:46 Part-3 */}
+                                    {tableColumns.map((column) => (
+                                        <td key={`${item.id}-${column.key}`} className="px-6 py-4 text-sm whitespace-nowrap text-gray-500">
+                                            {renderCell(item, column, index)}
                                         </td>
                                     ))}
                                 </tr>
                             ))
-                        ): (
-                            <></>
+                        ) : (
+                            <tr>
+                                <td colSpan={tableColumns.length} className="px-6 py-10 text-center text-sm text-gray-500">
+                                    <div className="flex flex-col items-center justify-center">
+                                        {Icon && <Icon className="mb-2 h-10 w-10 text-gray-400" />}
+                                        <p className="font-medium">
+                                            No {resourceName.toLowerCase()} Found
+                                        </p>
+                                        <p className="mt-1 text-gray-400">Try adjusting your search criteria</p>
+                                    </div>
+                                </td>
+                            </tr>
                         )}
-                    </tbody> 
-                    
+                    </tbody>
                 </table>
             </div>
+
+            <div className="mt-6 flex items-center justify-between">
+                <p className="text-sm text-gray-700">
+                    Showing <span className="font-medium">{data.from || 0}</span> to <span className="font-medium">{data.to || 0}</span> of
+                    <span className="font-medium"> {data.total}</span> results
+                </p>
+
+                <div className="flex items-center space-x-1">
+                    <button
+                        onClick={() => data.prev_page_url && router.visit(data.prev_page_url)}
+                        disabled={!data.prev_page_url}
+                        className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                        <ChevronLeft className="h-4 w-4" />
+                    </button>
+
+                    {data.links &&
+                        data.links.map((link: any, index: number) => {
+                            // Skip "prev" and "next" buttons
+                            if (link.label.includes("Previous") || link.label.includes("Next")) {
+                                return null;
+                            }
+                            
+                            // Try to parse the label as a number
+                            const pageNum = parseInt(link.label);
+                            if (isNaN(pageNum) && link.label.includes('...')) {
+                                return (
+                                    <span key={index} className="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700">
+                                        ...
+                                    </span>
+                                );
+                            }
+                            
+                            return (
+                                <button
+                                    key={index}
+                                    className={`relative inline-flex items-center rounded-md px-4 py-2 text-sm font-medium ${
+                                        link.active 
+                                            ? 'bg-blue-600 text-white' 
+                                            : 'border border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
+                                    }`}
+                                    onClick={() => router.visit(link.url)}
+                                    disabled={!link.url}
+                                >
+                                    {pageNum || link.label}
+                                </button>
+                            );
+                        })
+                    }
+
+                    <button
+                        onClick={() => router.visit(data.next_page_url)}
+                        disabled={!data.next_page_url}
+                        className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                        <ChevronRight className="h-4 w-4" />
+                    </button>
+                </div>
+            </div>
+
         </div>
     )
 }

@@ -4,7 +4,9 @@ import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import AppLayout from '@/layouts/app-layout';
 import users from '@/routes/users';
 import { User, type BreadcrumbItem } from '@/types';
-import { Head, usePage } from '@inertiajs/react';
+import { Head, usePage, router  } from '@inertiajs/react';
+import { UserCheck } from 'lucide-react';
+import {route} from 'ziggy-js';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -36,14 +38,46 @@ export default function Index({users}:{users:User[]}) {
             key: 'email',
             label: 'Email',
             sortable: true,
+        },
+        {
+            key: 'created_at',
+            label: 'Date',
+            type: "date",
+            sortable: true,
         }
     ]
+
+    const handleDelete = (id:any) => {
+        router.delete(route('users.destroy', id),{
+            preserveScroll: true,
+            onSuccess: () =>{
+                console.log("Пользователь успешно удалён")
+            }
+        })
+    }
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Пользователи" />
-            <div className='p-12'>
-                <h2>Пользователи</h2>
-                <DataTable/>
+            <Head title="Users" />
+            <div className="py-6">
+                <div className="mx-auto">
+                    <DataTable 
+                        data={users} 
+                        columns={columns} 
+                        resourceName='Users' 
+                        routeName='users.index' 
+                        filters={filters} 
+                        canCreateResource={true} 
+                        canEditResource={true} 
+                        canDeleteResource={true}
+                        canShowResource={true} 
+                        canViewResource={true}
+                        icon={UserCheck}
+                        createRoute='users.create'
+                        editRoute='users.edit'
+                        onDelete={handleDelete}
+                    />
+                </div>
             </div>
         </AppLayout>
     );
