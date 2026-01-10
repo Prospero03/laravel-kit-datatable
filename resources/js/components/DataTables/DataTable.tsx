@@ -2,6 +2,7 @@ import { usePage, router } from "@inertiajs/react"
 import { ArrowDown, ArrowUp, ChevronLeft, ChevronRight, Search } from "lucide-react";
 import React, { useState } from "react"
 import {route} from 'ziggy-js';
+import DeleteDialog from "../DeleteDialog";
 
 interface TableColumn {
     key: string;
@@ -139,6 +140,7 @@ export default function DataTable({
             return column.render(item);
         }
         if(column.type ==='IndexColumn' && column.render){
+            // console.log("Пользователь", item)
             return column.render(item, index);
         }
         return value;
@@ -147,34 +149,44 @@ export default function DataTable({
     const renderActions = (item : any) =>{
         return <div className="flex space-x-2">
             {canViewResource && (
-                <button onClick={() => router.visit(route(viewRoute, item.id))}>
-                    View
+                <button onClick={() => router.visit(route(viewRoute, item.id))}
+                 className="rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-600 
+                            hover:bg-blue-100 
+                            focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none">
+                    Смотреть
                 </button>
             )}
             {canEditResource && (
-                <button onClick={() => router.visit(route(editRoute, item.id))}>
-                    Edit
+                <button onClick={() => router.visit(route(editRoute, item.id))}
+                        className="rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-600 
+                                    hover:bg-blue-100 
+                                    focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none">
+                    Редактировать
                 </button>
             )}
             {canDeleteResource && (
                 <button onClick={() => {
                     setItemToDelete(item);
                     setShowDeleteDialog(true)
-                }}>
-                    Delete
+                }}
+                className="rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-600 
+                            hover:bg-red-100 
+                            focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:outline-none">
+                    Удалить
                 </button>
             )}
         </div>
     }
 
 
-    const tableColumns: TableColumn[] = []; 
+    let tableColumns: TableColumn[] = []; 
+    tableColumns = [...columns];
     // const tableColumns  = [...columns];
 
     if(canEditResource || canDeleteResource || canViewResource){
         tableColumns.push({
             key: ' actions',
-            label : 'Actions',
+            label : 'Действия',
             type: "custom",
             sortable: false,
             render: renderActions,
@@ -183,7 +195,7 @@ export default function DataTable({
     return(
         <div className="w-full bg-white">
             <div className="px-6 py-4">
-                <div className="mb-6 flex flex-col space-y-4 
+                <div className="mb-6 flex flex-row space-y-4 
                                 sm:items-center sm:justify-between sm:space-y-0">
                     <div className="flex items-center">
                         {Icon && <Icon className="mr-3 h-6 w-6 text-blue-600"/>}
@@ -194,32 +206,33 @@ export default function DataTable({
                             className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm 
                             hover:bg-blue-700 
                             focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none">
-                            Add {singularName}
+                            Добавить  {singularName}
                         </a>
                     )}
                 </div>
 
                 <div className="mb-6 flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
                     <form onSubmit={handleSearch} className="relative flex w-full max-w-md gap-x-2">
+                        <Search className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400"/>
                         <input
                             type="text"
-                            placeholder={`Search ...`}
+                            placeholder={`Поиск ...`}
                             className="w-full rounded-lg border  border-gray-300 py-2  pr-4 pl-10 text-gray-700 
                                     focus:border-blue-500 focus:ring-2 focus:ring-blue-200  focus:outline-none"
                             value={search}
                             onChange={(e)=> setSearch(e.target.value)}>
                         </input>
-                        <Search/>
+                        
                         <button type="submit" className="ml-2 rounded-lg bg-blue-600 px-4 py-2 text-white transition-colors 
                                                        hover:bg-blue-700
                                                         focus:ring-offset-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-200  focus:outline-none">
-                            Search
+                            Поиск
                         </button>
                     </form>
                     
                     <div className="flex items-center">
                         <label htmlFor="perPage" className="mr-2 text-sm font-medium text-gray-600">
-                            Show
+                            Показать
                         </label>
 
                         <select
@@ -235,18 +248,12 @@ export default function DataTable({
                             <option value="100">100</option>
                         </select>
                     </div>
-                
                 </div>
-
-
-
-
-
             </div>
 
-            <div className="overflow-hidden rounded-lg border border-gray-200 shadow">
-                <table className="min-w-full divide-y divide-gray-200 bg-white">
-                    <thead>
+            <div className="overflow-hidden rounded-lg border border-gray-200 shadow  m-6">
+                <table className="min-w-full divide-y divide-gray-200 bg-white ">
+                    <thead >
                         <tr className="bg-gray-50">
                             {tableColumns.map((column)=>(
                                 <th key={column.key}
@@ -256,7 +263,7 @@ export default function DataTable({
                                     {column.sortable !== false ? (
                                         <button onClick={() => handleSort(column.key)}
                                                 className="group inline-flex items-center">
-                                            column.label
+                                            {column.label}
                                             <span className="ml-2">
                                                 {sort === column.key ? (
                                                     direction === 'asc' ? (
@@ -284,7 +291,7 @@ export default function DataTable({
                                 <tr key={item.id} className="transition-colors hover:bg-gray-50">
                                     {tableColumns.map((column) => (
                                         <td key={`${item.id}-${column.key}`} className="px-6 py-4 text-sm whitespace-nowrap text-gray-500">
-                                            {renderCell(item, column, index)}
+                                            {renderCell(item, column, index)} 
                                         </td>
                                     ))}
                                 </tr>
@@ -295,7 +302,7 @@ export default function DataTable({
                                     <div className="flex flex-col items-center justify-center">
                                         {Icon && <Icon className="mb-2 h-10 w-10 text-gray-400" />}
                                         <p className="font-medium">
-                                            No {resourceName.toLowerCase()} Found
+                                            No {resourceName.toLowerCase()} Found 
                                         </p>
                                         <p className="mt-1 text-gray-400">Try adjusting your search criteria</p>
                                     </div>
@@ -306,10 +313,10 @@ export default function DataTable({
                 </table>
             </div>
 
-            <div className="mt-6 flex items-center justify-between">
+            <div className="mt-6 flex items-center justify-between m-6">
                 <p className="text-sm text-gray-700">
-                    Showing <span className="font-medium">{data.from || 0}</span> to <span className="font-medium">{data.to || 0}</span> of
-                    <span className="font-medium"> {data.total}</span> results
+                    Смотреть <span className="font-medium">{data.from || 0}</span> по <span className="font-medium">{data.to || 0}</span> из
+                    <span className="font-medium"> {data.total}</span> пользователей
                 </p>
 
                 <div className="flex items-center space-x-1">
@@ -365,7 +372,14 @@ export default function DataTable({
                 </div>
             </div>
 
+            <DeleteDialog 
+                isOpen={showDeleteDialog}
+                onClose={() => setShowDeleteDialog(false)}
+                onConfirm={() => onDelete(itemToDelete?.id)}
+                message="Вы уверены что хотите удалить пользователя ?"
+            />
         </div>
     )
 }
 
+// 17:47

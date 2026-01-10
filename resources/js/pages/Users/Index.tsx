@@ -26,22 +26,24 @@ export default function Index({users}:{users:User[]}) {
             width: '80px',
             sortable: false,
             render:(item: any, index:number)=>{
+                // console.log("Фильтры", filters)
+                // console.log("Index", index)
                 return(filters.page-1) *filters.perPage + index +1;
             },
         },
         {
             key: 'name',
-            label: 'Name',
+            label: 'Имя',
             sortable: true,
         },
         {
             key: 'email',
-            label: 'Email',
+            label: 'Электронная почта',
             sortable: true,
         },
         {
             key: 'created_at',
-            label: 'Date',
+            label: 'Дата создания',
             type: "date",
             sortable: true,
         }
@@ -64,7 +66,7 @@ export default function Index({users}:{users:User[]}) {
                     <DataTable 
                         data={users} 
                         columns={columns} 
-                        resourceName='Users' 
+                        resourceName='Пользователи' 
                         routeName='users.index' 
                         filters={filters} 
                         canCreateResource={true} 

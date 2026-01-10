@@ -28,8 +28,8 @@ class UserController extends Controller
             'filters'=>[
                 'search' => $search,
                 'direction' => $direction,
-                'per_page'=> $perPage,
-                'page'=> $request->input('page', 1),
+                'perPage'=> $perPage,
+                'page'=> (int) $request->input('page', 1),
                 'sort'=>$sort,
             ],
             'can'=>[
