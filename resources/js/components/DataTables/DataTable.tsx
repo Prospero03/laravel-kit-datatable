@@ -103,54 +103,65 @@ export default function DataTable({
         })
     }
     return(
-        <div className="">
-            <div className="">
-                <div className="">
-                    <div className="">
-                        {Icon && <Icon/>}
-                        <h2>{resourceName}</h2>
+        <div className="w-full bg-white">
+            <div className="px-6 py-4">
+                <div className="mb-6 flex flex-col space-y-4 
+                                sm:items-center sm:justify-between sm:space-y-0">
+                    <div className="flex items-center">
+                        {Icon && <Icon className="mr-3 h-6 w-6 text-blue-600"/>}
+                        <h2 className="text-2xl font-bold text-gray-800">{resourceName}</h2>
                     </div>
                     {canCreateResource &&(
                         <a  href={route(createRoute)}
-                            className="">
+                            className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm 
+                            hover:bg-blue-700 
+                            focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none">
                             Add {singularName}
                         </a>
                     )}
                 </div>
 
-                <div className="">
-                    <form onSubmit={handleSearch} className="">
+                <div className="mb-6 flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
+                    <form onSubmit={handleSearch} className="relative flex w-full max-w-md gap-x-2">
                         <input
                             type="text"
                             placeholder={`Search ...`}
-                            className=""
+                            className="w-full rounded-lg border  border-gray-300 py-2  pr-4 pl-10 text-gray-700 
+                                    focus:border-blue-500 focus:ring-2 focus:ring-blue-200  focus:outline-none"
                             value={search}
                             onChange={(e)=> setSearch(e.target.value)}>
                         </input>
                         <Search/>
-                        <button type="submit">
+                        <button type="submit" className="ml-2 rounded-lg bg-blue-600 px-4 py-2 text-white transition-colors 
+                                                       hover:bg-blue-700
+                                                        focus:ring-offset-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-200  focus:outline-none">
                             Search
                         </button>
                     </form>
+                    
+                    <div className="flex items-center">
+                        <label htmlFor="perPage" className="mr-2 text-sm font-medium text-gray-600">
+                            Show
+                        </label>
+
+                        <select
+                            id="perPage"
+                            className="rouded-lg border  border-gray-300 bg-white py-2 pr-8 pl-3 text-gray-700 
+                                     focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none"
+                            value={perPage}
+                            onChange={handlePerPageChange}>
+                            <option value="5">5</option>
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>
+                    </div>
+                
                 </div>
 
 
-                <div className="">
-                    <label htmlFor="perPage">
-                        Show
-                    </label>
-                    <select
-                        id="perPage"
-                        className=""
-                        value={perPage}
-                        onChange={handlePerPageChange}>
-                        <option value="5">5</option>
-                        <option value="10">10</option>
-                        <option value="25">25</option>
-                        <option value="50">50</option>
-                        <option value="100">100</option>
-                    </select>
-                </div>
+
 
 
             </div>
@@ -189,7 +200,7 @@ export default function DataTable({
                             ))}
                         </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-200">
+                    <tbody className="divide-y divide-gray-200">   
                         {data.data.length > 0 ?(
                             data.data.map((item:any,  index: number)=>(
                                 <tr key={item.id} className="transition-colors hover:bg-gray-50">
@@ -203,9 +214,11 @@ export default function DataTable({
                         ): (
                             <></>
                         )}
-                    </tbody>
+                    </tbody> 
+                    
                 </table>
             </div>
         </div>
     )
 }
+
