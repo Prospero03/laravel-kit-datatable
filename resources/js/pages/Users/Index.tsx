@@ -66,7 +66,8 @@ export default function Index({users}:{users:User[]}) {
                     <DataTable 
                         data={users} 
                         columns={columns} 
-                        resourceName='Пользователи' 
+                        resourceName='Пользователи'
+                        resourceNameNotFound='Пользователей'
                         routeName='users.index' 
                         filters={filters} 
                         canCreateResource={true} 

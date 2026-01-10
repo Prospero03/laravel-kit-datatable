@@ -16,6 +16,7 @@ export default function DataTable({
     data,
     columns=[],
     resourceName = '',
+    resourceNameNotFound = '',
     singularName = '',
     routeName = '',
     filters = {},
@@ -302,9 +303,9 @@ export default function DataTable({
                                     <div className="flex flex-col items-center justify-center">
                                         {Icon && <Icon className="mb-2 h-10 w-10 text-gray-400" />}
                                         <p className="font-medium">
-                                            No {resourceName.toLowerCase()} Found 
+                                            Не найдено {resourceNameNotFound.toLowerCase()}
                                         </p>
-                                        <p className="mt-1 text-gray-400">Try adjusting your search criteria</p>
+                                        <p className="mt-1 text-gray-400">Попробуйте скорректировать критерии поиска или добавить пользователей</p>
                                     </div>
                                 </td>
                             </tr>
