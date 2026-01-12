@@ -15,12 +15,12 @@ https://laravel.com/docs/12.x/pagination
     5) Inertia-страница	    `Users/Index`
     6) Props	            `users, filters, can`
 
-# Подключенные классы
+## Подключенные классы
     1) User - Eloquent модель users
     2) Request - Получение параметров из URL
     3) Inertia - Возврат React/Vue-страницы вместо Blade
 
-# Метод index
+## Метод index:
 
 1. Получение парметров из URL (query string)
     `$perPage = $request->input('per_page', 10);`
