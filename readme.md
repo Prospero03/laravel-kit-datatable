@@ -21,7 +21,7 @@ https://laravel.com/docs/12.x/pagination
 
 ## Метод index:
 
-#### 1.  Получение парметров из URL (query string) 
+#### 1.  Получение параметров из URL (query string) 
 `$perPage = $request->input('per_page', 10);`
 
 #### 2. Формирование запроса к базе 
@@ -74,3 +74,5 @@ https://laravel.com/docs/12.x/pagination
     - Управление UI
     - Показывать / скрывать кнопки
 
+
+# Компонент - UserController

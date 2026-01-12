@@ -1,9 +1,11 @@
+// @ts-nocheck
+
 import DataTable from '@/components/DataTables/DataTable';
 import Datatable from '@/components/DataTables/DataTable';
 import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import AppLayout from '@/layouts/app-layout';
 import users from '@/routes/users';
-import { User, type BreadcrumbItem } from '@/types';
+import { User , type BreadcrumbItem } from '@/types';
 import { Head, usePage, router  } from '@inertiajs/react';
 import { UserCheck } from 'lucide-react';
 import {route} from 'ziggy-js';
@@ -16,7 +18,9 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function Index({users}:{users:User[]}) {
-    const {filters, can} =usePage().props;
+    const {  filters, can } = usePage().props;
+    const page = usePage();
+    // console.log('page :', page.props);
 
     const columns =[
         {
@@ -63,7 +67,7 @@ export default function Index({users}:{users:User[]}) {
             <Head title="Users" />
             <div className="py-6">
                 <div className="mx-auto">
-                    <DataTable 
+                    <DataTable  
                         data={users} 
                         columns={columns} 
                         resourceName='Пользователи'

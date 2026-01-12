@@ -1,5 +1,6 @@
 import { usePage, router } from "@inertiajs/react"
 import { ArrowDown, ArrowUp, ChevronLeft, ChevronRight, Search } from "lucide-react";
+import { PaginatedData } from '@/types';
 import React, { useState } from "react"
 import {route} from 'ziggy-js';
 import DeleteDialog from "../DeleteDialog";
@@ -12,30 +13,75 @@ interface TableColumn {
     render?: (row:any) => React.ReactNode;
 }
 
-export default function DataTable({
-    data,
-    columns=[],
-    resourceName = '',
-    resourceNameNotFound = '',
-    singularName = '',
-    routeName = '',
-    filters = {},
-    viewRoute = '',
-    canViewResource = false,
-    canCreateResource = false,
-    canEditResource = false,
-    canDeleteResource = false,
-    icon : Icon,
-    createRoute = '',
-    editRoute = '',
-    onDelete ,
-}) {
+interface Filters {
+    search?: string;
+    perPage?: number;
+    sort?: string;
+    direction?: 'asc' | 'desc';
+    page?: number;
+}
+
+interface DataTableProps<T> {
+  data: PaginatedData<T>;
+  columns?: TableColumn[];
+  resourceName?: string;
+  resourceNameNotFound?: string;
+  singularName?: string;
+  routeName?: string;
+  filters?: Filters;
+  viewRoute?: string;
+  canViewResource?: boolean;
+  canCreateResource?: boolean;
+  canEditResource?: boolean;
+  canDeleteResource?: boolean;
+  icon?: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+  createRoute?: string;
+  editRoute?: string;
+  onDelete?: (id: number | string) => void;
+}
+
+// export default function DataTable({
+//     data  =[],
+//     columns=[],
+//     resourceName = '',
+//     resourceNameNotFound = '',
+//     singularName = '',
+//     routeName = '',
+//     filters = {},
+//     viewRoute = '',
+//     canViewResource = false,
+//     canCreateResource = false,
+//     canEditResource = false,
+//     canDeleteResource = false,
+//     icon : Icon,
+//     createRoute = '',
+//     editRoute = '',
+//     onDelete ,
+// }) { //как в видеокурсе
+export default function DataTable<T>({
+  data,
+  columns = [],
+  resourceName = '',
+  resourceNameNotFound = '',
+  singularName = '',
+  routeName = '',
+  filters,
+  viewRoute = '',
+  canViewResource = false,
+  canCreateResource = false,
+  canEditResource = false,
+  canDeleteResource = false,
+  icon: Icon,
+  createRoute = '',
+  editRoute = '',
+  onDelete,
+} : DataTableProps<T>) {
+
     const {errors}=usePage().props
     const [search, setSearch] = useState(filters?.search || '');
     const [perPage, setPerPage] = useState(filters?.perPage ||10);
     const [sort, setSort] = useState(filters?.sort || 'id');
     const [direction, setDirection]=useState(filters?.direction || 'desc');
-
     const [itemToDelete,setItemToDelete] = useState(null);
     const [showDeleteDialog, setShowDeleteDialog]=useState(false);
 
@@ -193,6 +239,7 @@ export default function DataTable({
             render: renderActions,
         })
     }
+
     return(
         <div className="w-full bg-white">
             <div className="px-6 py-4">
