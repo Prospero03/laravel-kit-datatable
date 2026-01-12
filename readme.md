@@ -21,17 +21,17 @@ https://laravel.com/docs/12.x/pagination
 
 ## Метод index:
 
-##### 1.  Получение парметров из URL (query string) 
+#### 1.  Получение парметров из URL (query string) 
 `$perPage = $request->input('per_page', 10);`
 
-##### 2. Формирование запроса к базе 
+#### 2. Формирование запроса к базе 
 `$query = User::query()`
 - Query Builder Eloquent -  параметров PDO для защиты вашего приложения от SQL-инъекций. Нет необходимости очищать или обрабатывать строки, передаваемые в конструктор запросов в качестве привязок.
 - Запрос ещё не выполняется
 - Можно добавлять условия
     
 
-##### 3. Условный поиск `when`
+#### 3. Условный поиск `when`
 Назначение:
 - when() выполняется ТОЛЬКО если $search не пуст
 
@@ -40,10 +40,10 @@ https://laravel.com/docs/12.x/pagination
 - Поиск идёт по двум колонкам name и email
 - Используется LIKE → частичное совпадение
 
-##### 4. Сортировка 
+#### 4. Сортировка 
 `$query->orderBy($sort, $direction);` 
 
-##### 5. Пагинация 
+#### 5. Пагинация 
 `$users = $query->paginate($perPage)->withQueryString();`
 - Выполняет SQL-запрос
 - Возвращает LengthAwarePaginator
@@ -57,12 +57,12 @@ https://laravel.com/docs/12.x/pagination
 `withQueryString()` - Сохраняет текущие параметры URL: `?search=alex&sort=email&page=2`. 
 * Без этого: при переходе на следующую страницу параметры пропадут 
 
-##### 6. Возврат страницы через Inertia
+#### 6. Возврат страницы через Inertia
 1) Загружает React/Vue Компонент и передаёт в него напрямую props
 2) `return Inertia::render('Users/Index', [`
 3) `resources/js/Pages/Users/Index.tsx`
 
-##### 7. Передаваемые данные (props)
+#### 7. Передаваемые данные (props)
 * Пользователи `'users' => $users,` , В React это будет :
     - `props.users.data        // массив пользователей`
     - `props.users.links       // пагинация`
