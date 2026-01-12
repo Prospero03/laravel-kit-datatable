@@ -30,12 +30,6 @@ https://laravel.com/docs/12.x/pagination
     - Query Builder Eloquent -  параметров PDO для защиты вашего приложения от SQL-инъекций. Нет необходимости очищать или обрабатывать строки, передаваемые в конструктор запросов в качестве привязок.
 
 3. Условный поиск `when`
-
-    - ` ->when($search, function($query, $search){`
-    - `     $query->where('name','like',"%$search%")`
-    - `        ->orWhere('email', 'like', "%$search%");`
-    - `});`
-
     - when() выполняется ТОЛЬКО если $search не пуст
     - Если $search = '' → этот блок пропускается
     - Поиск идёт по двум колонкам name и email
